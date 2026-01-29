@@ -1,0 +1,31 @@
+name: 基金套利每日自动巡逻
+
+on:
+  schedule:
+    # 每天北京时间上午 10:40 运行 (对应国际标准时间 UTC 2:40)
+    - cron: '40 2 * * *'
+  workflow_dispatch: # 这个代表手动开关，方便你随时测试
+
+jobs:
+  run_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 获取代码
+        uses: actions/checkout@v3
+
+      - name: 2. 安装运行环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 3. 安装必要的依赖库
+        run: pip install requests urllib3
+
+      - name: 4. 执行脚本
+        env:
+          # 这里连接你的“保险箱”机密
+          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          RECEIVER: ${{ secrets.RECEIVER }}
+        run: python 基金套利.py
