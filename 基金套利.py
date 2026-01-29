@@ -14,9 +14,10 @@ os.environ['http_proxy'] = ''
 os.environ['https_proxy'] = ''
 
 # --- 2. 修改后的配置区域 ---
-TOKEN = os.getenv("PUSH_TOKEN", "你的默认token") 
-MAIL_PASS = os.getenv("MAIL_PASS", "你的默认授权码") 
-# 其他保持不变...
+TOKEN = os.getenv("PUSH_TOKEN") 
+MAIL_PASS = os.getenv("MAIL_PASS")
+MAIL_USER = os.getenv("MAIL_USER") 
+RECEIVER = os.getenv("RECEIVER")
 
 def get_line(limit):
     """
@@ -184,3 +185,4 @@ def task():
 if __name__ == "__main__":
 
     task()
+
