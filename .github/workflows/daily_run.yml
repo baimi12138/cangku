@@ -2,12 +2,11 @@ name: Fund_Arbitrage_Patrol
 
 on:
   schedule:
-    # 每天北京时间 10:35 运行 (UTC 2:35)
-    - cron: '35 2 * * *'
-    # 增加一个备用点：北京时间 10:50 运行 (UTC 2:50)
-    - cron: '50 2 * * *'
+    # 周一到周五 北京时间 10:20 (UTC 2:20)
+    - cron: '20 2 * * 1-5'
+    # 周一到周五 北京时间 10:35 (UTC 2:35)  
+    - cron: '35 2 * * 1-5'
   workflow_dispatch:
-
 jobs:
   run_job:
     runs-on: ubuntu-latest
