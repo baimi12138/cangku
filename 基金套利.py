@@ -20,43 +20,49 @@ MAIL_PASS = os.getenv("MAIL_PASS")
 MAIL_USER = os.getenv("MAIL_USER") 
 RECEIVER = os.getenv("RECEIVER")
 
-MAIL_HOST = "smtp.qq.com"
-REMIND_TIME = "10:35" 
 
 def get_line(limit):
-    """【阶梯门槛逻辑】保留所有成本拆解注释"""
+    """
+    【阶梯门槛逻辑】保留所有成本拆解注释
+    计算公式：(申购费1.2%*0.1) + (0.2元最低佣金 / 限额) + 利润垫
+    """
     if limit <= 0: return 999 
-    if limit <= 10: return 2.6   # 10元档
+    if limit <= 10: return 15    # 极其严格：10元标的溢价不到15%根
+本不提醒
     if limit <= 100: return 0.8  # 100元档
     if limit <= 500: return 0.5  # 500元档
-    if limit <= 1000: return 0.4 
-    if limit <= 5000: return 0.3 
+    if limit <= 1000: return 0.4 # 1000元档
+    if limit <= 5000: return 0.3 # 5000元档
     return 0.3
 
 def calculate_salary(limit, yijia_rate, apply_fee_str, fund_id=''):
     """【工资核算逻辑】精准独立计算每只基金收益"""
     try:
-        fee_raw = float(apply_fee_str.replace('%', '')) if apply_fee_str else 1.2
+        fee_raw = float(apply_fee_str.replace('%', '')) if 
+
+apply_fee_str else 1.2
         real_fee_rate = (fee_raw * 0.1) / 100 
     except:
         real_fee_rate = 0.0012
     
     commission = max(0.2, limit * 0.0001) 
     
+    # --- 账户数逻辑 ---
     if fund_id == '161226' or fund_id.startswith('5'):
         account_count = 1
     else:
         account_count = 6
 
-    single_profit = (limit * (yijia_rate / 100)) - (limit * real_fee_rate) - commission
-    return round(max(0, single_profit * account_count), 2), account_count
+    single_profit = (limit * (yijia_rate / 100)) - (limit * 
+
+real_fee_rate) - commission
+    return round(max(0, single_profit * account_count), 2), 
+
+account_count
 
 def send_email(title, content):
     """发送邮件提醒"""
     try:
-        if not MAIL_USER or not MAIL_PASS:
-            print("❌ 邮件配置缺失，跳过邮件发送")
-            return
         message = MIMEText(content, 'plain', 'utf-8')
         message['From'] = MAIL_USER  
         message['To'] = RECEIVER
@@ -70,43 +76,61 @@ def send_email(title, content):
         print(f"❌ 邮件发送失败: {e}")
 
 def task():
-    # --- 判断是否周末 ---
+    # --- 这里的逻辑必须缩进 4 个空格，放在 task 内部 ---
     import datetime
     if datetime.datetime.now().weekday() >= 5:
         print("今天周末，好好休息，不巡逻啦！(～￣▽￣)～")
         return 
+    # ---------------------------------------------
 
     print(f"\n开始巡逻...")
     api_configs = [
-        {'url': 'https://www.jisilu.cn/data/lof/stock_lof_list/', 'name': '股票LOF'},
-        {'url': 'https://www.jisilu.cn/data/lof/index_lof_list/', 'name': '指数LOF'},
-        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/', 'name': 'QDII-欧'},
-        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/A', 'name': 'QDII-亚'},
-        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/C', 'name': 'QDII-商品'}
+        {'url': 'https://www.jisilu.cn/data/lof/stock_lof_list/', 
+
+'name': '股票LOF'},
+        {'url': 'https://www.jisilu.cn/data/lof/index_lof_list/', 
+
+'name': '指数LOF'},
+        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/', 
+
+'name': 'QDII-欧'},
+        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/A', 
+
+'name': 'QDII-亚'},
+        {'url': 'https://www.jisilu.cn/data/qdii/qdii_list/C', 
+
+'name': 'QDII-商品'}
     ]
     
-    headers = {'User-Agent': 'Mozilla/5.0', 'Referer': 'https://www.jisilu.cn/'}
+    headers = {'User-Agent': 'Mozilla/5.0', 'Referer': 
+
+'https://www.jisilu.cn/'}
     found_list = []
-    seen_ids = set()  # 【新增】去重集合：只在本次运行期间有效，防止重复抓取
+    seen_ids = set()  # 【新增1】初始化去重集合
     total_day_salary = 0.0 
     total_capital = 0.0
     
     for config in api_configs:
         try:
-            r = requests.get(config['url'], headers=headers, timeout=15, verify=False)
+            r = requests.get(config['url'], headers=headers, 
+
+timeout=15, verify=False)
             if r.status_code != 200: continue
             rows = r.json().get('rows', [])
             for row in rows:
                 item = row['cell']
                 fund_nm = item.get('fund_nm', '')
                 fund_id = item.get('fund_id', '')
-                
-                # --- 【新增】去重判断 ---
+
+                # --- 【新增2】核心去重判断 ---
+                # 如果这只基金之前已经加入过列表，直接跳过
                 if fund_id in seen_ids:
                     continue
-                # -----------------------
+                # --------------------------
 
-                if "ETF" in fund_nm.upper() and "LOF" not in fund_nm.upper(): continue
+                if "ETF" in fund_nm.upper() and "LOF" not in 
+
+fund_nm.upper(): continue
                 
                 status = item.get('apply_status', '')
                 limit_val = None
@@ -116,35 +140,53 @@ def task():
                         limit_val = int(nums[0])
                         if "千" in status: limit_val *= 1000
                 
-                if limit_val is None or limit_val > 6000 or "万" in status or limit_val <= 10:
+                if limit_val is None or limit_val > 6000 or "万" in 
+
+status or limit_val < 10:
                     continue
                 
                 raw_discount = item.get('discount_rt', None)
                 if raw_discount is None: continue
-                yijia_rate = float(str(raw_discount).replace('%', ''))
+                yijia_rate = float(str(raw_discount).replace('%', 
+
+''))
                 
                 threshold = get_line(limit_val)
                 if yijia_rate > threshold:
                     apply_fee = item.get('apply_fee', '1.20%')
-                    est_salary, accounts = calculate_salary(limit_val, yijia_rate, apply_fee, fund_id)
+                    est_salary, accounts = calculate_salary
+
+(limit_val, yijia_rate, apply_fee, fund_id)
                     
                     if est_salary > 0:
-                        # --- 【新增】记录已发现的基金 ---
+                        # --- 【新增3】记录已处理的基金 ---
                         seen_ids.add(fund_id)
-                        # -----------------------------
+                        # ------------------------------
+                        
                         total_day_salary += est_salary
                         total_capital += (limit_val * accounts)
                         found_list.append({
-                            'fund_nm': fund_nm, 'fund_id': fund_id, 'yijia_rate': yijia_rate,
-                            'limit_val': limit_val, 'accounts': accounts, 'est_salary': est_salary, 'apply_fee': apply_fee
+                            'fund_nm': fund_nm, 'fund_id': fund_id, 
+
+'yijia_rate': yijia_rate,
+                            'limit_val': limit_val, 'accounts': 
+
+accounts, 'est_salary': est_salary, 'apply_fee': apply_fee
                         })
         except: continue
 
     if found_list:
-        found_list.sort(key=lambda x: x['est_salary'], reverse=True)
-        now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        found_list.sort(key=lambda x: x['est_salary'], 
+
+reverse=True)
+        now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:
+
+%M')
         
-        display_title = f"✨ 发现可套利基金！今日小钱钱预计：+{total_day_salary:.2f}元 ✨"
+        # 统一的标题内容
+        display_title = f"✨ 发现可套利基金！今日小钱钱预计：
+
++{total_day_salary:.2f}元 ✨"
         
         content_lines = [
             "(๑•̀ㅂ•́)و✧ 报告主人！今日份的小钱钱已送达！",
@@ -180,9 +222,10 @@ def task():
         
         # 微信推送
         try:
-            if TOKEN:
-                requests.post("http://www.pushplus.plus/send", 
-                              data={'token': TOKEN, 'title': display_title, 'content': content}, timeout=10)
+            requests.post("http://www.pushplus.plus/send", 
+                          data={'token': TOKEN, 'title': 
+
+display_title, 'content': content}, timeout=10)
         except: pass
         
         # 邮件推送
