@@ -3,8 +3,8 @@ on:
   schedule:
     # 改成北京时间 09:15 (UTC 1:15) - 错开高峰
     - cron: '15 1 * * 1-5'
-    # 改成北京时间 14:45 (UTC 6:45) - 午休后
-    - cron: '45 6 * * 1-5'
+    # 改成北京时间 10:35 (UTC 2:35) - 原定时间
+    - cron: '35 2 * * 1-5'
   workflow_dispatch:
 jobs:
   run_job:
