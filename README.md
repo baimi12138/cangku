@@ -1,0 +1,1123 @@
+[index.html](https://github.com/user-attachments/files/25899899/index.html)
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>米粒LOF助手 - 你的全自动基金套利利润测算雷达</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #50B7B7;
+            --primary-dark: #3A9191;
+            --secondary: #FF6B6B;
+            --gold: #FFB84D;
+            --bg: #FAFBFC;
+            --card-bg: #FFFFFF;
+            --text: #2C3E50;
+            --text-light: #5A6C7D;
+            --border: #E8ECEF;
+            --shadow: rgba(80, 183, 183, 0.15);
+            --shadow-hover: rgba(80, 183, 183, 0.3);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            box-shadow: 0 2px 30px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            background: linear-gradient(135deg, #50B7B7 0%, #3A9191 50%, #2C7373 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M0,0 Q300,100 600,50 T1200,80 L1200,0 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 0.8s ease 0.2s both;
+        }
+
+        .hero .description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Image Placeholder */
+        .img-placeholder {
+            background: rgba(255,255,255,0.1);
+            border: 3px dashed rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            margin: 2rem auto;
+            text-align: center;
+            max-width: 700px;
+            animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .img-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .img-placeholder-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* Story Box */
+        .story-box {
+            background: white;
+            border-left: 5px solid var(--secondary);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 3rem;
+            animation: fadeInLeft 0.8s ease;
+        }
+
+        .story-box h3 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pain-points {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .pain-points li {
+            padding: 1rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pain-points li:last-child {
+            border-bottom: none;
+        }
+
+        .pain-points li::before {
+            content: '❌';
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+
+        .pain-points strong {
+            color: var(--text);
+        }
+
+        .story-text {
+            background: rgba(80, 183, 183, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            font-style: italic;
+            line-height: 1.9;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px var(--shadow-hover);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Rules Panel */
+        .rules-panel {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFE6E6 100%);
+            border: 2px solid var(--secondary);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin: 3rem 0;
+        }
+
+        .rules-panel h3 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rule-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .rule-item h4 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .rule-item ul {
+            margin-left: 1.5rem;
+        }
+
+        .rule-item li {
+            margin: 0.5rem 0;
+        }
+
+        .formula {
+            background: var(--text);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 40px var(--shadow);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--primary);
+            transition: height 0.4s ease;
+        }
+
+        .pricing-card:hover::before {
+            height: 100%;
+            opacity: 0.05;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 60px var(--shadow-hover);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            background: var(--gold);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--gold);
+            color: white;
+            padding: 0.3rem 2rem;
+            transform: rotate(45deg);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pricing-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .pricing-price {
+            font-family: 'Fira Code', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .pricing-price .currency {
+            font-size: 1.5rem;
+        }
+
+        .pricing-period {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.7rem 0;
+            padding-left: 1.8rem;
+            position: relative;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Target Audience */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .audience-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 25px var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .audience-card:hover {
+            transform: scale(1.05);
+        }
+
+        .audience-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .audience-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+
+        /* FAQ Section */
+        .faq-container {
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 3px 15px var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(80, 183, 183, 0.05);
+            color: var(--primary);
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 2rem;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 2rem 1.5rem 2rem;
+        }
+
+        .faq-answer p {
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        /* Payment Section */
+        .payment-box {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 50px var(--shadow);
+            margin: 3rem 0;
+        }
+
+        .qr-placeholder {
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+            background: rgba(80, 183, 183, 0.05);
+            border: 3px dashed var(--primary);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-placeholder-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            margin: 1.5rem 0;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .pricing-grid,
+            .features-grid,
+            .audience-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">米粒LOF助手 📡</div>
+            <ul class="nav-links">
+                <li><a href="#features">功能</a></li>
+                <li><a href="#pricing">订阅</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>米粒LOF助手 📡</h1>
+            <div class="subtitle">别再人工盯盘了!你的全自动"基金套利"利润测算雷达</div>
+            <p class="description">
+                全市场 LOF / QDII 溢价实时监控,精准扣除申购费与最低佣金。工具会在发现机会时,主动告诉你今日可套利的优质品种。不仅告诉你"买什么",更精准算出"赚多少"。<br>
+                每天只需 3 秒钟看邮件,轻松决定上不上车,彻底告别枯燥的手动盯盘!
+            </p>
+            <a href="#pricing" class="cta-button">立即订阅</a>
+
+            <!-- Image Placeholder 1: Email Preview -->
+            <div class="img-placeholder">
+                <div class="img-placeholder-icon">📧</div>
+                <div class="img-placeholder-text">
+                    【图片位置1】邮箱/微信实际推送效果截图<br>
+                    建议:放一张精美的邮件 HTML 卡片截图,重要数据如"预期利润"、"单日/月攒收益"标红加粗,体现"所见即所得"
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story & Pain Points -->
+    <section class="container">
+        <h2 class="section-title">🤔 你是否也经历过这些"套利踩坑"?</h2>
+        
+        <div class="story-box">
+            <h3>常见的套利痛点</h3>
+            <ul class="pain-points">
+                <li><strong>每天盯盘太心累:</strong> 几百只 LOF 基金,每天挨个看溢价率和限额,密密麻麻的表格看得眼都花了?</li>
+                <li><strong>算错手续费被"反撸":</strong> 看着溢价挺高,结果没算清券商"单笔最低 0.2 元"的佣金,一顿操作猛如虎,一看利润负两毛?</li>
+                <li><strong>容易错过大肥肉:</strong> 像白银基金那种突然拉起来的机会,等别人传人我才知道,肉汤都没了。</li>
+                <li><strong>搞错规则白占资金:</strong> 忘了沪市单户限制,或者不知道 QDII 是 T+3 交收,导致资金无效站岗?</li>
+            </ul>
+
+            <div class="story-text">
+                <h4 style="color: var(--primary); margin-bottom: 1rem;">我为什么要做这个工具?</h4>
+                一开始,我自己每天刷表也刷得心力交瘁。溢价高的大机会很少出现,却要每天持续盯着,还要自己心算"溢价率减去申购费 + 卖出佣金后到底能赚多少"。<br><br>
+                思来想去,我就花了好几天自己手搓了个小脚本:每天自动监控、筛选、计算、发邮件。前前后后用了几个月优化抓取逻辑和排版,才达到现在的效果。<br><br>
+                现在用了之后,腰不疼了、眼不花了、上楼都有力气了(开个玩笑😂)。每天早上打开邮箱,只看一眼符合条件的推送,照着申购就完事了。没有达标的机会,它就安静地不打扰我,超级省心!
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="container">
+        <h2 class="section-title">✨ 别再人工盯盘了,让工具为你打工</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>全市场实时扫描<br>绝不漏一个"钢镚"</h3>
+                <p>自动对接云端数据源,剔除无法套利的普通 ETF,只把有溢价、开放申购的优质标的送到你面前。省下每天 1 小时的搜集时间,摸鱼搞钱两不误。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🧮</div>
+                <h3>极其硬核的"净利润"计算器<br>(独家!)</h3>
+                <p>这绝不是一个只展示"溢价率"的半成品。系统自动按申购费打一折扣除,并严格计算券商单笔最低 0.2 元(或万一)的佣金。多账户收益自动叠加,报告上写着赚 2 块,落袋就是赚 2 块!</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>智能风控过滤系统<br>把风险挡在门外</h3>
+                <p>保住本金比赚取溢价更重要。自动拦截微小额度的高波动基金(如 10 元限额原油,避免 T+3 暴跌风险)。根据限额自动动态调整报警线,拒绝无效信息轰炸。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>独创"单日"与"月攒"<br>双轨收益策略</h3>
+                <p>针对 10 元限额基金,系统自动测算连攒 20 天卖出的收益,帮你狂省 95% 券商最低佣金,蚊子腿经过复利也能变大肉。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>贴心的"保姆级"<br>战术备注</h3>
+                <p>推送自带战术小抄:标普500提示 T+3 到账;沪市 5 开头警告单户限制;161226 等标注唯一身份证标的。节假日 A 股不开盘,工具自动休眠不打扰。</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⏰</div>
+                <h3>精准时间推送<br>避开早盘波动</h3>
+                <p>每天上午 10:35 准时发送,这是精心选择的时间节点,避开了早盘波动最剧烈的时刻,让你在相对稳定的时段做决策。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules & Formula -->
+    <section class="container">
+        <h2 class="section-title">⚠️ 硬核规则与说明</h2>
+        
+        <div class="rules-panel">
+            <h3>订阅前强烈建议必读:硬核筛选逻辑、计算公式与免责声明</h3>
+            
+            <div class="rule-item">
+                <h4>🎯 默认筛选规则与发送时间</h4>
+                <ul>
+                    <li><strong>发送时间:</strong> 每天上午 10:35。这是我精心筛选的时间,避开了早盘波动最剧烈的时刻。</li>
+                    <li><strong>筛选条件:</strong> 溢价率 > 1%(太低了不够塞牙缝);限额 1 万以下(原因:无限额套利成功率太低,高限额跟没有没区别,直接过滤掉节省精力)。</li>
+                </ul>
+            </div>
+
+            <div class="rule-item">
+                <h4>🧮 不仅告诉你"买什么",更算清楚"赚多少"</h4>
+                <p>这绝对不是一个只展示"溢价率"的半成品,我的脚本内置了严格的净收益计算器。</p>
+                
+                <div class="formula">
+                    预计收益 = 申购金额 × 户数 - 申购费 - 卖出佣金
+                </div>
+
+                <ul>
+                    <li><strong>计算标准(重要说明):</strong> 这里的申购费是按场内申购打一折计算;卖出佣金按万分之一(最低 0.2 元起)计算。</li>
+                    <li class="warning"><strong>必须自查费率:</strong> 这是我自己的费率,也是大部分老套利者的标准费率,但不一定是你的!在跟着操作前,请务必确认你的券商费率。如果你的佣金是万三或者单笔 5 元起步,请千万别做微型套利,利润会全被手续费吃掉!听我一句劝,先换个低费率券商再来捡钢镚!</li>
+                </ul>
+            </div>
+
+            <div class="rule-item">
+                <h4>📊 数据来源说明(真心话)</h4>
+                <p>之前我一直用的是集思录的数据,后来集思录把溢价率功能关了,当时我真的心碎一地......😭</p>
+                <p>现在全部数据都来自 <strong>haoetf.com</strong> 这个公开网页。真的要感谢这个网站的作者,做得太好了!没有它,我可能真的要被迫去手搓溢价率抓取逻辑了(想想都想哭 o(╥_╥)o)。</p>
+
+                <!-- Image Placeholder 2: haoetf.com screenshot -->
+                <div class="img-placeholder" style="margin: 1.5rem 0; padding: 2rem;">
+                    <div class="img-placeholder-icon">🖼️</div>
+                    <div class="img-placeholder-text">
+                        【图片位置2】haoetf.com 网站截图<br>
+                        说明:展示一下原始表格的密密麻麻,衬托出工具的自动化优势
+                    </div>
+                </div>
+
+                <p>如果你不嫌麻烦,完全可以每天自己去 haoetf 刷表、挑限额、算收益——它免费,而且数据很全。但如果你跟我一样是个懒人,想每天只花 3 秒钟看一眼邮件就能知道今天有没有肉,那我的小工具就是为你准备的。</p>
+            </div>
+
+            <div class="rule-item">
+                <h4>⚠️ 风险提示(丑话说在前面)</h4>
+                <p class="warning">套利绝对不是稳赚不赔的!这里的预计收益是理论上的理想数字。高溢价存在回归风险,海外 QDII 存在净值波动风险,套利可能亏损。作者不对任何投资结果负责,请大家自行判断。</p>
+            </div>
+
+            <div class="rule-item">
+                <h4>📅 订阅时间说明</h4>
+                <ul>
+                    <li>您的订阅有效期从我给您发送"订阅成功"确认邮件的第二天开始计算。</li>
+                    <li>支付后,我会在48小时内把您加进推送列表,并发送确认邮件。</li>
+                    <li>确认邮件里会明确写:生效日期(从明天开始)、到期日期。</li>
+                    <li>第一封数据推送邮件会从生效日期当天早上开始发(没有机会时不发)。</li>
+                    <li>如果我因为特殊情况晚加了,会手动多送您几天作为补偿,绝不让您吃亏。</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Target Audience -->
+    <section class="container">
+        <h2 class="section-title">👥 适合谁来使用?</h2>
+        
+        <div class="audience-grid">
+            <div class="audience-card">
+                <div class="audience-icon">💼</div>
+                <h3>上班族/白领</h3>
+                <p>没时间盯盘,希望每天利用 3 分钟带薪拉屎的时间,完成低风险无脑操作。</p>
+            </div>
+
+            <div class="audience-card">
+                <div class="audience-icon">🛡️</div>
+                <h3>稳健理财者</h3>
+                <p>追求积少成多,看重确定性收益,希望通过套利赚点买菜钱、话费钱。</p>
+            </div>
+
+            <div class="audience-card">
+                <div class="audience-icon">📊</div>
+                <h3>量化与数据控</h3>
+                <p>不相信直觉,只相信精准计算,需要可靠工具替代低效的人工 Excel 统计。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="container">
+        <h2 class="section-title">💳 选择你的搞钱配置</h2>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-icon">🍼</div>
+                <div class="pricing-title">试水版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>2.99
+                </div>
+                <div class="pricing-period">/周</div>
+                <ul class="pricing-features">
+                    <li>体验一周实际推送效果</li>
+                    <li>按默认筛选规则推送</li>
+                    <li>每天 10:35 准时发送</li>
+                    <li>不放心?先花两块钱试试</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="pricing-badge">推荐</div>
+                <div class="pricing-icon">☕</div>
+                <div class="pricing-title">基础版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>9.9
+                </div>
+                <div class="pricing-period">/月</div>
+                <ul class="pricing-features">
+                    <li>省心包月,懒人首选</li>
+                    <li>按大众标准费率计算</li>
+                    <li>每天 10:35 准时发送</li>
+                    <li>个人基础版其实已经完全够用了~</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <div class="pricing-icon">👑</div>
+                <div class="pricing-title">进阶定制版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>29.9
+                </div>
+                <div class="pricing-period">/月</div>
+                <ul class="pricing-features">
+                    <li>单独修改脚本参数</li>
+                    <li>自定义专属费率</li>
+                    <li>自定义报警线(如溢价率>3%)</li>
+                    <li>可自定义每日发送时间</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Section -->
+    <section class="container">
+        <div class="payment-box">
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">支付方式(支付宝经营收款码)</h2>
+            <p style="margin-bottom: 1rem;">直接扫下方支付宝经营收款码支付(支持信用卡/花呗)</p>
+            <p style="color: var(--secondary); font-weight: 700; margin-bottom: 1rem;">
+                ⚠️ 支付时请在支付宝<strong>转账备注</strong>里写上你的邮箱(格式:xxx@xxx.com)
+            </p>
+            <p style="margin-bottom: 2rem;">比如:"订阅月费9.9 + tool@163.com"</p>
+
+            <!-- QR Code Placeholder -->
+            <div class="qr-placeholder">
+                <div class="qr-placeholder-icon">📱</div>
+                <div style="color: var(--primary); font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem;">
+                    【图片位置3】
+                </div>
+                <div style="color: var(--text-light);">
+                    唯一的聚合支付宝收款码<br>
+                    收款码下方可以再用小字强调一遍<br>
+                    "付款备注千万记得写邮箱哦!"
+                </div>
+            </div>
+
+            <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 1rem;">
+                我会在账单看到备注后,当天/次日把你加进推送列表,并发订阅成功邮件。
+            </p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="container">
+        <h2 class="section-title">❓ 常见问题解答</h2>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我的券商佣金是万三,还能用这个工具吗?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>可以用,但建议先去开个低佣金账户!万三的佣金做微型套利会非常吃亏。现在很多券商都能谈到万一甚至更低,最低 0.2 元起。如果你暂时不想换券商,建议只跟进限额较大(500+)的机会,小额套利容易被手续费吃掉利润。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>为什么有时候好几天都不发邮件?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>这是正常现象!套利机会本身就不是天天有的。工具的筛选标准是溢价率 > 1% 且限额 < 1万,符合条件时才推送,不符合就不打扰你。这样可以避免信息轰炸,让你专注于真正有价值的机会。另外,节假日 A 股不开盘时,工具也会自动休眠。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>订阅后多久能收到第一封推送?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>支付后我会在48小时内把您加入列表并发确认邮件。确认邮件会明确告知生效日期和到期日期。从生效日期的第二天开始,如果当天有符合条件的套利机会,您就会在上午 10:35 收到推送。如果当天没有机会,就不会发送。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>工具推荐的基金一定能赚钱吗?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>不一定!请一定要看清楚免责声明。工具计算的是理论收益,实际操作中存在多种风险:高溢价可能快速回归、QDII 净值可能波动、申购可能失败等。套利不是稳赚不赔,而是一种相对低风险的策略。请根据自己的风险承受能力谨慎操作,不要盲目跟单。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我可以自己去 haoetf.com 看数据,为什么还要订阅?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>完全可以!haoetf.com 是免费的,数据也很全。如果你不介意每天花时间去刷表、筛选限额、手动计算扣除手续费后的净收益,那确实不需要订阅。这个工具的价值在于:自动化监控 + 精准计算净利润 + 智能筛选 + 主动推送。本质上是用很小的成本买你的时间和省心。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>"月攒"策略是什么意思?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>针对 10 元限额的基金,如果每天都申购然后立即卖出,会被券商最低 0.2 元的佣金吃掉大部分利润。"月攒"策略是指连续申购 20 天左右再一次性卖出,这样只需要支付一次卖出佣金,能节省约 95% 的手续费成本。工具会自动计算并标注"月攒收益",帮你判断是否值得采用这种策略。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>订阅后可以退款吗?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>对不起,因为是个人运营的小工具,暂时不支持退款。建议您先订阅试水版(2.99元/周)体验一下实际效果,确认满意后再考虑包月。试水版已经是最低价格了,可以让您低成本体验完整功能。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>进阶定制版可以定制哪些内容?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>进阶定制版可以根据您的实际情况调整:1) 自定义申购费率和佣金费率(按您的实际券商费率计算);2) 自定义筛选条件(比如只看溢价率>3%的,或只看限额>100的);3) 自定义发送时间(比如改成早上9点或下午2点)。订阅后请通过邮件告知您的定制需求,我会在1-2个工作日内完成配置。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo" style="margin-bottom: 1rem; font-size: 1.8rem;">米粒LOF助手 📡</div>
+            <p style="margin-bottom: 1rem;">联系作者:微信公众号【米粒的拾金笔记】</p>
+            <p style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                如有出现问题请直接通过邮件回复。个人独立运营,如回复慢了请见谅,看到必回!
+            </p>
+            <div class="footer-links">
+                <a href="#features">功能介绍</a>
+                <a href="#pricing">订阅价格</a>
+                <a href="#faq">常见问题</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.85rem; opacity: 0.6;">
+                © 2026 米粒的拾金笔记. All rights reserved.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.6; max-width: 800px; margin-left: auto; margin-right: auto;">
+                免责声明:本工具数据来源于公开网站 haoetf.com,仅供个人参考和学习,不构成任何投资建议。投资有风险,入市需谨慎,高溢价存在回归风险,套利可能亏损。作者不对任何投资结果负责,请自行判断。
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .audience-card, .pricing-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
