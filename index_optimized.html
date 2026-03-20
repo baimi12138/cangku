@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>米粒LOF助手 - 每日精选套利机会推送</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --midnight: #0A1929;
+            --deep-blue: #132F4C;
+            --ocean: #1A5C8F;
+            --teal: #00B4D8;
+            --mint: #90E0EF;
+            --gold: #FFB700;
+            --cream: #FFF8E7;
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-300: #CBD5E1;
+            --gray-600: #475569;
+            --gray-900: #0F172A;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, var(--cream) 0%, var(--white) 100%);
+            color: var(--gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Animated grain texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 180, 216, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 183, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0%); }
+            70% { transform: translate(0%, 15%); }
+            80% { transform: translate(-15%, 10%); }
+            90% { transform: translate(10%, 5%); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(10, 25, 41, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--midnight);
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            letter-spacing: 0.01em;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--ocean);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--ocean);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 100px;
+            padding: 4rem 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ocean);
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.08), rgba(0, 180, 216, 0.02));
+            border: 1.5px solid rgba(0, 180, 216, 0.2);
+            border-radius: 50px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge::before {
+            content: '●';
+            color: var(--teal);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3.8rem;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--midnight);
+            letter-spacing: -0.03em;
+        }
+
+        .hero h1 .highlight {
+            color: var(--ocean);
+            font-style: italic;
+            position: relative;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            width: 100%;
+            height: 0.15em;
+            background: linear-gradient(90deg, var(--teal), var(--gold));
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--gray-600);
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--ocean), var(--deep-blue));
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.02em;
+            box-shadow: 0 10px 30px rgba(26, 92, 143, 0.25);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(26, 92, 143, 0.35);
+        }
+
+        .hero-cta::after {
+            content: '→';
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta:hover::after {
+            transform: translateX(5px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-300);
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--ocean);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .showcase-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 
+                0 20px 60px rgba(10, 25, 41, 0.12),
+                0 0 0 1px rgba(10, 25, 41, 0.05);
+            transform: rotate(-2deg);
+            transition: all 0.4s ease;
+        }
+
+        .showcase-card:hover {
+            transform: rotate(0deg) translateY(-10px);
+            box-shadow: 
+                0 30px 80px rgba(10, 25, 41, 0.18),
+                0 0 0 1px rgba(10, 25, 41, 0.08);
+        }
+
+        .showcase-card img {
+            width: 100%;
+            border-radius: 16px;
+            display: block;
+        }
+
+        .showcase-caption {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .showcase-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            color: var(--midnight);
+            margin-bottom: 0.5rem;
+        }
+
+        .showcase-desc {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Decorative elements */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 180, 216, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+        }
+
+        /* Features Section */
+        .features-section {
+            background: white;
+            padding: 5rem 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+
+        .section-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--teal);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.8rem;
+            color: var(--midnight);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--gray-50);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teal), var(--gold));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 20px 40px rgba(10, 25, 41, 0.1);
+            border-color: var(--teal);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            color: var(--midnight);
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .feature-desc {
+            color: var(--gray-600);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* How it Works */
+        .how-section {
+            padding: 5rem 2.5rem;
+            background: linear-gradient(180deg, white 0%, var(--gray-50) 100%);
+        }
+
+        .steps-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            gap: 3rem;
+        }
+
+        .step-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ocean), var(--teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 30px rgba(26, 92, 143, 0.3);
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: var(--midnight);
+            margin-bottom: 0.75rem;
+            font-weight: 400;
+        }
+
+        .step-content p {
+            color: var(--gray-600);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2.5rem;
+            background: var(--midnight);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 180, 216, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 183, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .pricing-section .section-title {
+            color: white;
+        }
+
+        .pricing-section .section-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .pricing-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .price-card.featured {
+            background: white;
+            color: var(--midnight);
+            border-color: var(--gold);
+            box-shadow: 0 20px 60px rgba(255, 183, 0, 0.3);
+        }
+
+        .price-card.featured::before {
+            content: '⭐ 推荐';
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--gold), #FFA500);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .price-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-header {
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .price-card.featured .plan-name {
+            color: var(--ocean);
+        }
+
+        .plan-price {
+            font-family: 'Space Mono', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .price-card.featured .plan-price {
+            color: var(--midnight);
+        }
+
+        .plan-price .currency {
+            font-size: 2rem;
+        }
+
+        .plan-duration {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .price-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .price-features li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-card.featured .price-features li {
+            border-color: var(--gray-300);
+            color: var(--gray-600);
+        }
+
+        .price-features li::before {
+            content: '✓';
+            color: var(--teal);
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .price-card.featured .price-features li::before {
+            color: var(--ocean);
+        }
+
+        .price-cta {
+            display: block;
+            text-align: center;
+            padding: 1.2rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .price-card.featured .price-cta {
+            background: linear-gradient(135deg, var(--ocean), var(--deep-blue));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 30px rgba(26, 92, 143, 0.4);
+        }
+
+        .price-cta:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .price-card.featured .price-cta:hover {
+            box-shadow: 0 15px 40px rgba(26, 92, 143, 0.5);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2.5rem;
+            background: white;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--teal);
+        }
+
+        .faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--midnight);
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--ocean);
+        }
+
+        .faq-icon {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--teal);
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            padding: 0 2rem 1.5rem;
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--midnight);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 2.5rem 2rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--teal);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 41, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid var(--gray-300);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-300);
+            transform: rotate(90deg);
+        }
+
+        .modal-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: var(--midnight);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--midnight);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #EF4444;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--ocean);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26, 92, 143, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #EF4444;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        .form-error {
+            font-size: 0.85rem;
+            color: #EF4444;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .invite-highlight {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.08), rgba(255, 183, 0, 0.05));
+            border: 2px solid rgba(0, 180, 216, 0.2);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .invite-highlight strong {
+            color: var(--ocean);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .invite-highlight p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--ocean), var(--deep-blue));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 10px 30px rgba(26, 92, 143, 0.3);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(26, 92, 143, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .step-number {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">💰</span>
+                米粒LOF助手
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">产品功能</a></li>
+                <li><a href="#how">使用流程</a></li>
+                <li><a href="#pricing">订阅方案</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    每日早间 05:00 准时推送
+                </div>
+                <h1>
+                    每天清晨收到<br>
+                    <span class="highlight">精选套利机会</span>
+                </h1>
+                <p class="hero-subtitle">
+                    自动计算溢价率、预测收益、筛选优质机会，每日推送至您的邮箱。
+                    让您在喝咖啡的时间里，轻松掌握当天值得关注的LOF套利标的。
+                </p>
+                <div class="hero-cta-group">
+                    <a href="#pricing" class="hero-cta">
+                        立即订阅
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">05:00</span>
+                        <span class="stat-label">准时推送</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">4+</span>
+                        <span class="stat-label">热门基金</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">自动化</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="showcase-card">
+                    <img src="1.jpg" alt="真实推送邮件示例">
+                    <div class="showcase-caption">
+                        <div class="showcase-title">真实推送示例</div>
+                        <div class="showcase-desc">每日 05:00，精选套利机会直达邮箱</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="section-header">
+            <div class="section-eyebrow">为什么选择我们</div>
+            <h2 class="section-title">专注细节，只为更好的体验</h2>
+            <p class="section-subtitle">
+                不只是推送数据，而是帮您做好筛选和判断，节省您宝贵的时间
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">智能筛选</h3>
+                <p class="feature-desc">
+                    自动排除低溢价、小额度、低价值的机会，只推送真正值得关注的标的，让您的注意力聚焦在高质量机会上。
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">深度计算</h3>
+                <p class="feature-desc">
+                    不仅展示溢价率，还会考虑限额、月摊成本，为您计算单日预期收益和月度收益，让决策更清晰。
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⏰</span>
+                <h3 class="feature-title">准时送达</h3>
+                <p class="feature-desc">
+                    每天早晨 05:00 准时推送，让您在喝第一杯咖啡时就能掌握今天的套利机会，不错过任何窗口期。
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📱</span>
+                <h3 class="feature-title">简洁易读</h3>
+                <p class="feature-desc">
+                    精心设计的邮件模板，移动端友好，关键信息一目了然，让您在碎片时间快速做出决策。
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔄</span>
+                <h3 class="feature-title">持续监控</h3>
+                <p class="feature-desc">
+                    跟踪华宝油气、国泰商品、标普科技、纳指LOF等热门标的，及时发现溢价窗口。
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">💡</span>
+                <h3 class="feature-title">贴心提示</h3>
+                <p class="feature-desc">
+                    附带T+3到账提示、风险提醒等实用信息，帮助您更好地规划操作节奏。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+        <div class="section-header">
+            <div class="section-eyebrow">简单三步</div>
+            <h2 class="section-title">开始接收每日推送</h2>
+        </div>
+        <div class="steps-container">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>选择套餐并订阅</h3>
+                    <p>
+                        选择适合您的订阅方案，填写邮箱和昵称，通过爱发电完成支付。
+                        支持试水版（2.99元/周）和基础版（29.9元/月）。
+                    </p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>自动激活推送</h3>
+                    <p>
+                        支付成功后，系统将在 24 小时内自动为您开通推送服务。
+                        无需任何额外操作，一切自动完成。
+                    </p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>每天接收精选推送</h3>
+                    <p>
+                        从次日开始，每天早晨 05:00 准时收到当天的套利机会推送。
+                        打开邮件，快速浏览，决策操作，就是这么简单。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <div class="section-eyebrow" style="color: var(--teal);">灵活选择</div>
+            <h2 class="section-title">选择适合您的订阅方案</h2>
+            <p class="section-subtitle">
+                从试水体验到长期订阅，总有一款适合您
+            </p>
+        </div>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="price-header">
+                    <div class="plan-name">试水版</div>
+                    <div class="plan-price">
+                        <span class="currency">¥</span>2.99
+                        <span class="plan-duration">/ 周</span>
+                    </div>
+                </div>
+                <ul class="price-features">
+                    <li>7 天完整体验</li>
+                    <li>每日早晨 05:00 推送</li>
+                    <li>精选套利机会</li>
+                    <li>收益预测计算</li>
+                    <li>邮件直达收件箱</li>
+                </ul>
+                <a href="#" class="price-cta" onclick="openSubscribeModal('试水版'); return false;">
+                    开始试水
+                </a>
+            </div>
+            <div class="price-card featured">
+                <div class="price-header">
+                    <div class="plan-name">基础版</div>
+                    <div class="plan-price">
+                        <span class="currency">¥</span>29.9
+                        <span class="plan-duration">/ 月</span>
+                    </div>
+                </div>
+                <ul class="price-features">
+                    <li>整月不间断推送</li>
+                    <li>每日早晨 05:00 推送</li>
+                    <li>精选套利机会</li>
+                    <li>收益预测计算</li>
+                    <li>邮件直达收件箱</li>
+                    <li>邀请好友双方各得 15 天</li>
+                </ul>
+                <a href="#" class="price-cta" onclick="openSubscribeModal('基础版'); return false;">
+                    立即订阅
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="section-header">
+            <div class="section-eyebrow">常见问题</div>
+            <h2 class="section-title">您可能想了解的</h2>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>推送的是什么内容？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>每天早晨推送当日精选的LOF套利机会，包含基金名称、溢价率、限额、预计单日收益、月摊收益等关键信息。我们会自动过滤掉低价值机会，只推送值得关注的标的。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>什么时候会收到推送？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>每天早晨 05:00 准时发送。这个时间可以让您在起床后就看到当天的机会，有充足时间做决策。如果某天确实没有符合筛选标准的机会，则不会发送推送。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>支付成功后多久能收到推送?</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>支付成功后，系统会在 24 小时内自动激活您的推送服务。从次日开始，您就会在每天 05:00 收到推送邮件。无需任何额外操作，一切自动完成。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>邀请好友有什么奖励？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>订阅时填写已订阅用户的邮箱作为邀请人，支付成功后您和邀请人双方各获得 15 天额外时长。注意：邀请人必须是已经订阅过的用户才有效。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>收到推送就一定能赚钱吗？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>不一定！请务必清楚：工具计算的是理论收益，实际操作存在多种风险——溢价可能快速回归、QDII净值波动、申购可能失败等。套利不是稳赚不赔，而是相对低风险的策略。请根据自己的风险承受能力谨慎操作。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>订阅后可以退款吗？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>抱歉，因为是个人运营的小工具，暂不支持退款。建议您先选择试水版（2.99元/周）体验实际效果，确认满意后再考虑包月订阅。试水版已是最低价格，可以让您低成本体验完整功能。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">💰 米粒LOF助手</div>
+        <p style="margin-bottom: 1rem;">联系作者：微信公众号【米粒的拾金笔记】</p>
+        <p style="margin-bottom: 1rem; font-size: 0.95rem;">
+            个人独立运营，如回复慢了请见谅。有问题请直接邮件回复，看到必回！
+        </p>
+        <div class="footer-links">
+            <a href="#features">产品功能</a>
+            <a href="#how">使用流程</a>
+            <a href="#pricing">订阅方案</a>
+            <a href="#faq">常见问题</a>
+        </div>
+        <p style="margin-top: 2rem; font-size: 0.85rem; opacity: 0.6;">
+            © 2026 米粒的拾金笔记. All rights reserved.
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.5; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            免责声明：本工具数据来源于公开市场信息,仅供参考学习,不构成投资建议。
+            投资有风险,入市需谨慎,高溢价存在回归风险,套利可能亏损。
+            作者不对任何投资结果负责,请自行判断。
+        </p>
+    </footer>
+
+    <!-- Subscribe Modal -->
+    <div class="modal-overlay" id="subscribeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeSubscribeModal()">×</button>
+                <h2>开始订阅</h2>
+                <p>填写信息后将跳转到爱发电完成支付</p>
+            </div>
+            <div class="modal-body">
+                <form id="subscribeForm" onsubmit="handleSubscribe(event)">
+                    <div class="form-group">
+                        <label class="form-label">
+                            我的邮箱 <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            id="userEmail" 
+                            placeholder="example@gmail.com"
+                            required
+                        >
+                        <div class="form-hint">用于接收每日套利推送</div>
+                        <div class="form-error" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            我的昵称 <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-input" 
+                            id="userNickname" 
+                            placeholder="小明"
+                            required
+                        >
+                        <div class="form-hint">用于邮件称呼，让推送更有温度</div>
+                        <div class="form-error" id="nicknameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            邀请人邮箱（选填）
+                        </label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            id="inviterEmail" 
+                            placeholder="friend@gmail.com"
+                        >
+                        <div class="form-hint">填写已订阅用户的邮箱，双方各得15天</div>
+                        <div class="form-error" id="inviterError"></div>
+                    </div>
+
+                    <div class="invite-highlight">
+                        <strong>🎁 邀请好友奖励</strong>
+                        <p>邀请人必须是已订阅用户，支付成功后你们双方各得15天时长</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="subscribeForm" class="submit-button">
+                    确认并跳转支付
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlan = '基础版';
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Modal functions
+        function openSubscribeModal(plan) {
+            selectedPlan = plan || '基础版';
+            document.getElementById('subscribeModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribeModal() {
+            document.getElementById('subscribeModal').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('subscribeForm').reset();
+            clearErrors();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('subscribeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSubscribeModal();
+            }
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSubscribeModal();
+            }
+        });
+
+        // Form validation and submission (爱发电支付逻辑)
+        function handleSubscribe(event) {
+            event.preventDefault();
+            
+            clearErrors();
+            
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const userNickname = document.getElementById('userNickname').value.trim();
+            const inviterEmail = document.getElementById('inviterEmail').value.trim();
+            
+            // Validate
+            let isValid = true;
+            
+            if (!userEmail || !validateEmail(userEmail)) {
+                showError('emailError', '请输入有效的邮箱地址');
+                isValid = false;
+            }
+            
+            if (!userNickname) {
+                showError('nicknameError', '请输入您的昵称');
+                isValid = false;
+            }
+            
+            if (inviterEmail && !validateEmail(inviterEmail)) {
+                showError('inviterError', '邀请人邮箱格式不正确');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // 构建 remark 字符串（爱发电支付逻辑）
+            // 格式: "my:用户邮箱|nick:昵称|inv:邀请人邮箱"
+            let remark = `my:${userEmail}|nick:${userNickname}`;
+            if (inviterEmail) {
+                remark += `|inv:${inviterEmail}`;
+            }
+            
+            // 爱发电支付链接
+            // TODO: 替换为你的实际爱发电用户名和计划ID
+            const afdianUsername = '你的用户名';  // 替换为实际用户名
+            const planId = '你的计划ID';  // 替换为实际计划ID
+            
+            const afdianBaseUrl = `https://afdian.net/@${afdianUsername}?p=${planId}`;
+            const paymentUrl = `${afdianBaseUrl}&remark=${encodeURIComponent(remark)}`;
+            
+            // 跳转到爱发电支付页面
+            window.open(paymentUrl, '_blank');
+            
+            // 延迟关闭弹窗
+            setTimeout(() => {
+                closeSubscribeModal();
+            }, 500);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            const inputElement = errorElement.previousElementSibling.previousElementSibling;
+            inputElement.classList.add('error');
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+        }
+    </script>
+</body>
+</html>
