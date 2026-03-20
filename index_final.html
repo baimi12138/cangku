@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💎 米粒LOF助手 - 自动化套利提醒服务</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --forest: #1B4332;
+            --forest-dark: #081C15;
+            --forest-mid: #2D6A4F;
+            --emerald: #40916C;
+            --mint: #52B788;
+            --gold: #D4AF37;
+            --gold-light: #F4E5B2;
+            --cream: #FAF8F3;
+            --gray: #95A39D;
+            --gray-dark: #52796F;
+            --text: #081C15;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(27, 67, 50, 0.015) 100px, rgba(27, 67, 50, 0.015) 200px);
+            animation: slide 60s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(250, 248, 243, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(27, 67, 50, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            color: var(--forest);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links a:hover {
+            color: var(--forest);
+        }
+
+        /* Hero Section - Magazine Style */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 3rem 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .hero-content {
+            padding-top: 1rem;
+        }
+
+        .hero-eyebrow {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
+            color: var(--forest-dark);
+            letter-spacing: -0.04em;
+        }
+
+        .hero h1 .highlight {
+            color: var(--emerald);
+            font-style: italic;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--gray-dark);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--forest);
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-cta:hover {
+            background: var(--forest-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(27, 67, 50, 0.25);
+        }
+
+        .hero-cta::after {
+            content: '→';
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+        }
+
+        .phone-display {
+            position: relative;
+        }
+
+        .phone-frame {
+            background: linear-gradient(135deg, var(--forest-dark), var(--forest));
+            border-radius: 40px;
+            padding: 16px;
+            box-shadow: 
+                0 30px 60px rgba(27, 67, 50, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .phone-screen {
+            border-radius: 30px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .phone-screen img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Section Styling */
+        section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Story Section */
+        .story-section {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(27, 67, 50, 0.08);
+        }
+
+        .story-section h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .story-section p {
+            color: var(--gray-dark);
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pain-points {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .pain-points li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(27, 67, 50, 0.08);
+            color: var(--gray-dark);
+            line-height: 1.7;
+        }
+
+        .pain-points li:last-child {
+            border-bottom: none;
+        }
+
+        .pain-points li strong {
+            color: var(--forest);
+            font-weight: 600;
+        }
+
+        /* Rules Section */
+        .rules-section {
+            background: linear-gradient(135deg, rgba(27, 67, 50, 0.03), rgba(27, 67, 50, 0.08));
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+            border: 1px solid rgba(27, 67, 50, 0.15);
+        }
+
+        .rules-section h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .rule-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--gold);
+        }
+
+        .rule-item h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--forest-dark);
+            margin-bottom: 1rem;
+        }
+
+        .rule-item p,
+        .rule-item ul {
+            color: var(--gray-dark);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .rule-item ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .rule-item ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .rule-item ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--emerald);
+            font-weight: bold;
+        }
+
+        .formula {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--gold);
+            color: var(--forest-dark);
+            font-weight: 500;
+        }
+
+        .warning {
+            color: #DC2626;
+            font-weight: 500;
+        }
+
+        .section-header {
+            max-width: 800px;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--forest-dark);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--gray-dark);
+        }
+
+        /* Feature Cards - Magazine Layout */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(27, 67, 50, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gold);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--forest-dark);
+            line-height: 1.3;
+        }
+
+        .feature-card p {
+            color: var(--gray-dark);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        /* Pricing - Elevated Cards */
+        .pricing-container {
+            background: linear-gradient(135deg, var(--forest-dark), var(--forest));
+            padding: 4rem 3rem;
+            margin: 3rem 0;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.15), transparent 60%);
+        }
+
+        .pricing-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-header .section-label {
+            color: var(--gold-light);
+        }
+
+        .pricing-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1.75rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .pricing-card.featured {
+            background: white;
+            border: 2px solid var(--gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 2rem;
+            background: var(--gold);
+            color: var(--forest-dark);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .pricing-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pricing-name {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--forest-dark);
+        }
+
+        .pricing-price {
+            font-family: 'Fraunces', serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--forest);
+            margin: 0.75rem 0;
+            line-height: 1;
+        }
+
+        .pricing-price .currency {
+            font-size: 1.3rem;
+            opacity: 0.7;
+        }
+
+        .pricing-price .period {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: var(--gray-dark);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .pricing-features li {
+            padding: 0.65rem 0;
+            color: var(--gray-dark);
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(27, 67, 50, 0.08);
+            line-height: 1.5;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--emerald);
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+
+        /* Invite Bonus - Highlighted Section */
+        .invite-section {
+            background: var(--gold-light);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .invite-section h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--forest-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .invite-section p {
+            font-size: 1rem;
+            color: var(--gray-dark);
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .invite-bonus {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--gold);
+            color: var(--forest-dark);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .invite-bonus::before {
+            content: '🎁';
+            font-size: 1.5rem;
+        }
+
+        /* FAQ - Accordion */
+        .faq-list {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(27, 67, 50, 0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--emerald);
+        }
+
+        .faq-question {
+            padding: 1.75rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--forest-dark);
+            font-size: 1.05rem;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(27, 67, 50, 0.02);
+        }
+
+        .faq-icon {
+            color: var(--gold);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 600px;
+            padding: 0 2rem 1.75rem;
+        }
+
+        .faq-answer p {
+            line-height: 1.8;
+            color: var(--gray-dark);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--forest-dark);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 4rem 3rem 2rem;
+            margin-top: 6rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .footer-links a {
+            color: var(--mint);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 28, 21, 0.85);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            transform: translateY(30px);
+            transition: transform 0.4s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--forest-dark), var(--forest));
+            color: white;
+            padding: 3rem 2.5rem 2rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--forest-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: var(--gold);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid rgba(27, 67, 50, 0.15);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: var(--cream);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--emerald);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(64, 145, 108, 0.1);
+        }
+
+        .form-input.error {
+            border-color: #DC2626;
+        }
+
+        .form-hint {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .form-error {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #DC2626;
+            font-weight: 500;
+        }
+
+        .invite-highlight {
+            background: var(--gold-light);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .invite-highlight strong {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            color: var(--forest-dark);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .invite-highlight p {
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+        }
+
+        .modal-footer {
+            padding: 0 2.5rem 2.5rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            background: var(--forest);
+            color: white;
+            padding: 1.25rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .submit-button:hover {
+            background: var(--forest-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(27, 67, 50, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+            }
+
+            .pricing-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            section {
+                padding: 3rem 1.5rem;
+            }
+
+            .pricing-container {
+                padding: 3rem 1.5rem;
+            }
+
+            .modal-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .pricing-card {
+                padding: 1.75rem 1.5rem;
+            }
+
+            .story-section,
+            .rules-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .rule-item {
+                padding: 1.5rem;
+            }
+
+            .invite-section {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content,
+        .hero-visual,
+        .feature-card,
+        .pricing-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature-card:nth-child(2) { animation-delay: 0.1s; }
+        .feature-card:nth-child(3) { animation-delay: 0.2s; }
+        .feature-card:nth-child(4) { animation-delay: 0.3s; }
+        .feature-card:nth-child(5) { animation-delay: 0.4s; }
+        .feature-card:nth-child(6) { animation-delay: 0.5s; }
+
+        .pricing-card:nth-child(2) { animation-delay: 0.1s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">💎 米粒LOF助手</div>
+            <ul class="nav-links">
+                <li><a href="#features">核心功能</a></li>
+                <li><a href="#pricing">订阅方案</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-eyebrow">智能套利监控系统</span>
+                <h1>
+                    让<span class="highlight">每一个套利机会</span><br>
+                    都不错过
+                </h1>
+                <p class="hero-subtitle">
+                    全市场 LOF/QDII 溢价实时监控，精准计算净利润，
+                    每天上午 10:35 主动推送优质套利机会到你的邮箱。
+                    告别手动盯盘，3秒决策上车。
+                </p>
+                <a href="#pricing" class="hero-cta">
+                    立即开始
+                </a>
+            </div>
+
+            <div class="hero-visual">
+                <div class="phone-display">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <img src="1.jpg" alt="邮件推送示例">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points & Story -->
+    <section>
+        <div class="section-header">
+            <div class="section-label">Pain Points</div>
+            <h2 class="section-title">你是否也经历过这些"套利踩坑"？</h2>
+        </div>
+
+        <div class="story-section">
+            <ul class="pain-points">
+                <li><strong>每天盯盘太心累：</strong>几百只 LOF 基金，每天挨个看溢价率和限额，密密麻麻的表格看得眼都花了？</li>
+                <li><strong>算错手续费被"反撸"：</strong>看着溢价挺高，结果没算清券商"单笔最低 0.2 元"的佣金，一顿操作猛如虎，一看利润负两毛？</li>
+                <li><strong>容易错过大肥肉：</strong>像白银基金那种突然拉起来的机会，等别人传人我才知道，肉汤都没了。</li>
+                <li><strong>搞错规则白占资金：</strong>忘了沪市单户限制，或者不知道 QDII 是 T+3 交收，导致资金无效站岗？</li>
+            </ul>
+
+            <h3>我为什么要做这个工具？</h3>
+            <p>
+                一开始，我自己每天刷表也刷得心力交瘁。溢价高的大机会很少出现，却要每天持续盯着，还要自己心算"溢价率减去申购费 + 卖出佣金后到底能赚多少"。
+            </p>
+            <p>
+                思来想去，我就花了好几天自己手搓了个小脚本：每天自动监控、筛选、计算、发邮件。前前后后用了几个月优化抓取逻辑和排版，才达到现在的效果。
+            </p>
+            <p>
+                现在用了之后，腰不疼了、眼不花了、上楼都有力气了（开个玩笑😂）。每天早上打开邮箱，只看一眼符合条件的推送，照着申购就完事了。没有达标的机会，它就安静地不打扰我，超级省心！
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-header">
+            <div class="section-label">核心功能</div>
+            <h2 class="section-title">专业工具，为套利而生</h2>
+            <p class="section-description">
+                从数据监控到收益计算，每一个环节都经过精心打磨，
+                只为让你的套利操作更简单、更准确、更省心。
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🌐</span>
+                <h3>全市场实时监控</h3>
+                <p>
+                    自动扫描所有 LOF 基金，剔除不可套利的普通 ETF，
+                    只把真正有价值的溢价机会推送给你。节省每天至少1小时的搜集时间。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🧮</span>
+                <h3>精准净利润计算</h3>
+                <p>
+                    不只告诉你溢价率，更重要的是算清楚扣除申购费、佣金后的实际收益。
+                    多账户自动叠加，让你清楚知道这一单能赚多少。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🛡️</span>
+                <h3>智能风控过滤</h3>
+                <p>
+                    自动拦截高风险标的（如小额高波动原油基金），
+                    根据限额动态调整报警线，只推送真正值得操作的机会。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>双轨收益策略</h3>
+                <p>
+                    针对小额基金，自动计算"单日套利"和"月攒策略"两种收益，
+                    帮你节省95%的手续费成本，蚊子腿也能积少成多。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">💡</span>
+                <h3>保姆级战术备注</h3>
+                <p>
+                    每个推送自带操作提示：T+3到账提醒、沪市单户限制警告、
+                    特殊标的标注。节假日自动休眠，不打扰你的生活。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⏰</span>
+                <h3>精准时间推送</h3>
+                <p>
+                    上午10:35准时发送，这是经过精心测试的最佳时间节点，
+                    避开早盘剧烈波动，让你在相对稳定的时段做决策。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules & Filters -->
+    <section>
+        <div class="section-header">
+            <div class="section-label">Rules</div>
+            <h2 class="section-title">硬核规则与说明</h2>
+            <p class="section-description">
+                订阅前强烈建议必读：筛选逻辑、计算公式与免责声明
+            </p>
+        </div>
+
+        <div class="rules-section">
+            <div class="rule-item">
+                <h4>🎯 默认筛选规则与发送时间</h4>
+                <ul>
+                    <li><strong>发送时间：</strong>每天上午 10:35。这是我精心筛选的时间，避开了早盘波动最剧烈的时刻。</li>
+                    <li><strong>筛选条件：</strong>溢价率 > 1%（太低了不够塞牙缝）；限额 1 万以下（原因：无限额套利成功率太低，高限额跟没有没区别，直接过滤掉节省精力）；成交额 > 100万（过滤掉流动性太差的冷门标的）。</li>
+                </ul>
+            </div>
+
+            <div class="rule-item">
+                <h4>🧮 不仅告诉你"买什么"，更算清楚"赚多少"</h4>
+                <p>这绝对不是一个只展示"溢价率"的半成品，我的脚本内置了严格的净收益计算器。</p>
+                
+                <div class="formula">
+                    预计收益 = 申购金额 × 户数 - 申购费 - 卖出佣金
+                </div>
+
+                <ul>
+                    <li><strong>计算标准（重要说明）：</strong>这里的申购费是按场内申购打一折计算；卖出佣金按万分之一（最低 0.2 元起）计算。</li>
+                    <li class="warning"><strong>必须自查费率：</strong>这是我自己的费率，也是大部分老套利者的标准费率，但不一定是你的！在跟着操作前，请务必确认你的券商费率。如果你的佣金是万三或者单笔 5 元起步，请千万别做微型套利，利润会全被手续费吃掉！听我一句劝，先换个低费率券商再来捡钢镚！</li>
+                </ul>
+            </div>
+
+            <div class="rule-item">
+                <h4>⚠️ 风险提示（丑话说在前面）</h4>
+                <p class="warning">套利绝对不是稳赚不赔的！这里的预计收益是理论上的理想数字。高溢价存在回归风险，海外 QDII 存在净值波动风险，套利可能亏损。作者不对任何投资结果负责，请大家自行判断。</p>
+            </div>
+
+            <div class="rule-item">
+                <h4>📅 订阅时间说明</h4>
+                <ul>
+                    <li>支付后，我会在48小时内把您加进推送列表，并发送确认邮件。</li>
+                    <li>确认邮件里会明确写：生效日期、到期日期。</li>
+                    <li>生效日期就是当天发送邮件的那天。收到订阅后会加到列表，会在当天的交易日或者下一个交易日生效，并发确认邮件。如果是在10:35前订阅，且当天是交易日就会在当天生效，否则就是下一个交易日生效。</li>
+                    <li>为了防止打扰，没有达标的机会不会推送哦！只有当天有符合条件的套利机会时，您才会在上午 10:35 收到推送。</li>
+                    <li>如果我因为特殊情况晚加了，会手动多送您几天作为补偿，绝不让您吃亏。</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <div class="pricing-container" id="pricing">
+        <div class="pricing-header">
+            <div class="section-label">订阅方案</div>
+            <h2>选择适合你的套利工具</h2>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card" onclick="openSubscribeModal('试水版')">
+                <span class="pricing-icon">🍼</span>
+                <div class="pricing-name">试水版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>2.99<span class="period">/周</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>体验一周实际推送效果</li>
+                    <li>按默认筛选规则推送</li>
+                    <li>每天 10:35 准时发送</li>
+                    <li>不放心？先花两块钱试试</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card featured" onclick="openSubscribeModal('基础版')">
+                <div class="pricing-badge">推荐</div>
+                <span class="pricing-icon">☕</span>
+                <div class="pricing-name">基础版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>9.9<span class="period">/月</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>省心包月，懒人首选</li>
+                    <li>按大众标准费率计算</li>
+                    <li>每天 10:35 准时发送</li>
+                    <li>个人基础版完全够用</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card" onclick="openSubscribeModal('进阶定制版')">
+                <span class="pricing-icon">👑</span>
+                <div class="pricing-name">进阶定制版</div>
+                <div class="pricing-price">
+                    <span class="currency">¥</span>29.9<span class="period">/月</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>单独修改脚本参数</li>
+                    <li>自定义专属费率</li>
+                    <li>自定义报警线设置</li>
+                    <li>可自定义发送时间</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="invite-section">
+            <h3>邀请好友，双方各得15天</h3>
+            <p>
+                订阅时填写朋友的邮箱，支付成功后，你和你的朋友都会<strong>免费获得15天订阅时长</strong>。
+                好东西就该一起分享，让更多人摆脱盯盘之苦。
+            </p>
+            <span class="invite-bonus">双方各得 +15 天</span>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section id="faq">
+        <div class="section-header">
+            <div class="section-label">常见问题</div>
+            <h2 class="section-title">你可能想了解的</h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我的券商佣金是万三，还能用这个工具吗？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>可以用，但建议先去开个低佣金账户！万三的佣金做微型套利会非常吃亏。现在很多券商都能谈到万一甚至更低，最低 0.2 元起。如果你暂时不想换券商，建议只跟进限额较大（500+）的机会，小额套利容易被手续费吃掉利润。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>为什么有时候好几天都不发邮件？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>这是正常现象！套利机会本身就不是天天有的。工具的筛选标准是溢价率 > 1%、限额 < 1万、成交额 > 100万，符合条件时才推送，不符合就不打扰你。这样可以避免信息轰炸，让你专注于真正有价值的机会。另外，节假日 A 股不开盘时，工具也会自动休眠。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>订阅后多久能收到第一封推送？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>支付后我会在48小时内把您加入列表并发确认邮件。确认邮件会明确告知生效日期和到期日期。如果是在10:35前订阅，且当天是交易日就会在当天生效，否则就是下一个交易日生效。从生效日期开始，如果当天有符合条件的套利机会，您就会在上午 10:35 收到推送。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>工具推荐的基金一定能赚钱吗？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>不一定！请一定要看清楚免责声明。工具计算的是理论收益，实际操作中存在多种风险：高溢价可能快速回归、QDII 净值可能波动、申购可能失败等。套利不是稳赚不赔，而是一种相对低风险的策略。请根据自己的风险承受能力谨慎操作，不要盲目跟单。</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>订阅后可以退款吗？</span>
+                    <span class="faq-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    <p>对不起，因为是个人运营的小工具，暂时不支持退款。建议您先订阅试水版（2.99元/周）体验一下实际效果，确认满意后再考虑包月。试水版已经是最低价格了，可以让您低成本体验完整功能。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">💎 米粒LOF助手</div>
+            <p style="margin-bottom: 1rem;">联系作者：微信公众号【米粒的拾金笔记】</p>
+            <p style="margin-bottom: 1rem; font-size: 0.95rem; opacity: 0.8;">
+                个人独立运营，如回复慢了请见谅。有问题请直接邮件回复，看到必回！
+            </p>
+            <div class="footer-links">
+                <a href="#features">功能介绍</a>
+                <a href="#pricing">订阅方案</a>
+                <a href="#faq">常见问题</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.85rem; opacity: 0.6;">
+                © 2026 米粒的拾金笔记. All rights reserved.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.6; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                免责声明：本工具数据来源于公开市场信息，仅供个人参考和学习，不构成任何投资建议。
+                投资有风险，入市需谨慎，高溢价存在回归风险，套利可能亏损。
+                作者不对任何投资结果负责，请自行判断。
+            </p>
+        </div>
+    </footer>
+
+    <!-- Subscribe Modal -->
+    <div class="modal-overlay" id="subscribeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeSubscribeModal()">×</button>
+                <h2>开始订阅</h2>
+                <p>填写信息后将跳转到爱发电完成支付</p>
+            </div>
+            <div class="modal-body">
+                <form id="subscribeForm" onsubmit="handleSubscribe(event)">
+                    <div class="form-group">
+                        <label class="form-label">
+                            我的邮箱 <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            id="userEmail" 
+                            placeholder="example@gmail.com"
+                            required
+                        >
+                        <div class="form-hint">用于接收每日套利推送</div>
+                        <div class="form-error" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            我的昵称 <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-input" 
+                            id="userNickname" 
+                            placeholder="小明"
+                            required
+                        >
+                        <div class="form-hint">用于邮件称呼，让推送更有温度</div>
+                        <div class="form-error" id="nicknameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            邀请人邮箱（选填）
+                        </label>
+                        <input 
+                            type="email" 
+                            class="form-input" 
+                            id="inviterEmail" 
+                            placeholder="friend@gmail.com"
+                        >
+                        <div class="form-hint">填写已订阅用户的邮箱，双方各得15天</div>
+                        <div class="form-error" id="inviterError"></div>
+                    </div>
+
+                    <div class="invite-highlight">
+                        <strong>🎁 邀请好友奖励</strong>
+                        <p>邀请人必须是已订阅用户，支付成功后你们双方各得15天时长</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="subscribeForm" class="submit-button">
+                    确认并跳转支付
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlan = '基础版';
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Modal functions
+        function openSubscribeModal(plan) {
+            selectedPlan = plan || '基础版';
+            document.getElementById('subscribeModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribeModal() {
+            document.getElementById('subscribeModal').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('subscribeForm').reset();
+            clearErrors();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('subscribeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSubscribeModal();
+            }
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSubscribeModal();
+            }
+        });
+
+        // Form validation and submission (爱发电支付逻辑)
+        function handleSubscribe(event) {
+            event.preventDefault();
+            
+            clearErrors();
+            
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const userNickname = document.getElementById('userNickname').value.trim();
+            const inviterEmail = document.getElementById('inviterEmail').value.trim();
+            
+            // Validate
+            let isValid = true;
+            
+            if (!userEmail || !validateEmail(userEmail)) {
+                showError('emailError', '请输入有效的邮箱地址');
+                isValid = false;
+            }
+            
+            if (!userNickname) {
+                showError('nicknameError', '请输入您的昵称');
+                isValid = false;
+            }
+            
+            if (inviterEmail && !validateEmail(inviterEmail)) {
+                showError('inviterError', '邀请人邮箱格式不正确');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // 构建 remark 字符串（爱发电支付逻辑）
+            // 格式: "my:用户邮箱|nick:昵称|inv:邀请人邮箱"
+            let remark = `my:${userEmail}|nick:${userNickname}`;
+            if (inviterEmail) {
+                remark += `|inv:${inviterEmail}`;
+            }
+            
+            // 爱发电支付链接
+            // TODO: 替换为你的实际爱发电用户名和计划ID
+            const afdianUsername = '你的用户名';  // 替换为实际用户名
+            const planId = '你的计划ID';  // 替换为实际计划ID
+            
+            const afdianBaseUrl = `https://afdian.net/@${afdianUsername}?p=${planId}`;
+            const paymentUrl = `${afdianBaseUrl}&remark=${encodeURIComponent(remark)}`;
+            
+            // 跳转到爱发电支付页面
+            window.open(paymentUrl, '_blank');
+            
+            // 延迟关闭弹窗
+            setTimeout(() => {
+                closeSubscribeModal();
+            }, 500);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            const inputElement = errorElement.previousElementSibling.previousElementSibling;
+            inputElement.classList.add('error');
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+        }
+    </script>
+</body>
+</html>
