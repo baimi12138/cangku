@@ -1121,7 +1121,6 @@
         </div>
     </div>
 </div>
-
 <script>
     let selectedPlan = '基础版';
 
@@ -1169,7 +1168,7 @@
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSubscribeModal(); });
 
-/* ── Form Submit (爱发电支付逻辑) ── */
+    /* ── Form Submit (爱发电支付逻辑) ── */
     function handleSubscribe(event) {
         event.preventDefault();
         clearErrors();
@@ -1196,7 +1195,6 @@
         if (!isValid) return;
 
         // 构建 remark 字符串（爱发电支付逻辑）
-        // 格式: "my:用户邮箱|nick:昵称|inv:邀请人邮箱"
         let remark = `my:${userEmail}|nick:${userNickname}`;
         if (inviterEmail) remark += `|inv:${inviterEmail}`;
 
@@ -1219,6 +1217,22 @@
         
         // 延迟半秒关闭当前弹窗
         setTimeout(() => closeSubscribeModal(), 500);
+    }
+
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function showError(elementId, message) {
+        const errorEl = document.getElementById(elementId);
+        errorEl.textContent = message;
+        const inputEl = errorEl.previousElementSibling.previousElementSibling;
+        if (inputEl) inputEl.classList.add('error');
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
     }
 </script>
 </body>
