@@ -1088,17 +1088,17 @@
             <div class="modal-plan-pill" id="modalPlanLabel">基础版</div>
         </div>
         <div class="modal-body">
-            <form id="subscribeForm" onsubmit="handleSubscribe(event)">
+            <form id="subscribeForm">
                 <div class="form-group">
                     <label class="form-label">我的邮箱 <span class="req">*</span></label>
-                    <input type="email" class="form-input" id="userEmail" placeholder="example@gmail.com" required>
+                    <input type="email" class="form-input" id="userEmail" placeholder="example@gmail.com">
                     <div class="form-hint">用于接收每日套利推送</div>
                     <div class="form-error" id="emailError"></div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">我的昵称 <span class="req">*</span></label>
-                    <input type="text" class="form-input" id="userNickname" placeholder="小明" required>
+                    <input type="text" class="form-input" id="userNickname" placeholder="小明">
                     <div class="form-hint">用于邮件称呼，让推送更有温度</div>
                     <div class="form-error" id="nicknameError"></div>
                 </div>
@@ -1117,10 +1117,11 @@
             </form>
         </div>
         <div class="modal-foot">
-            <button type="submit" form="subscribeForm" class="submit-btn">确认并跳转支付 →</button>
+            <button type="button" class="submit-btn" onclick="handleSubscribe(event)">确认并跳转支付 →</button>
         </div>
     </div>
 </div>
+
 <script>
     let selectedPlan = '基础版';
 
@@ -1170,7 +1171,7 @@
 
     /* ── Form Submit (爱发电支付逻辑) ── */
     function handleSubscribe(event) {
-        event.preventDefault();
+        if (event) event.preventDefault();
         clearErrors();
 
         const userEmail    = document.getElementById('userEmail').value.trim();
@@ -1194,7 +1195,7 @@
 
         if (!isValid) return;
 
-        // 构建 remark 字符串（爱发电支付逻辑）
+        // 构建 remark 字符串
         let remark = `my:${userEmail}|nick:${userNickname}`;
         if (inviterEmail) remark += `|inv:${inviterEmail}`;
 
@@ -1205,18 +1206,12 @@
             '进阶定制版': 'https://www.ifdian.net/order/create?plan_id=4d012a4e1fc211f1879752540025c377&product_type=0' 
         };
 
-        // 根据用户选中的套餐获取对应链接，默认兜底为基础版
         const baseUrl = afdianUrls[selectedPlan] || afdianUrls['基础版'];
-        
-        // 智能拼接备注信息（包含邮箱、昵称、邀请人）
         const separator = baseUrl.includes('?') ? '&' : '?';
         const paymentUrl = `${baseUrl}${separator}remark=${encodeURIComponent(remark)}`;
 
-        // 在新标签页打开爱发电支付页面
-        window.open(paymentUrl, '_blank');
-        
-        // 延迟半秒关闭当前弹窗
-        setTimeout(() => closeSubscribeModal(), 500);
+        // 强力跳转：使用当前页面直接跳转，防止任何浏览器/微信拦截新弹窗
+        window.location.href = paymentUrl;
     }
 
     function validateEmail(email) {
