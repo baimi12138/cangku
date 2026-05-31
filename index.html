@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -138,26 +139,29 @@
             box-shadow: 0 24px 80px rgba(12,30,23,0.12), 0 0 0 1px var(--border);
             overflow: hidden;
         }
+
+        /* ── 改动1：卡片顶栏改为轻量浅色，不再和 iframe 内的深色 header 撞 ── */
         .live-card-header {
-            background: #1f2937; padding: 0.75rem 1.25rem;
+            background: var(--warm-white);
+            border-bottom: 1px solid var(--border);
+            padding: 0.6rem 1.1rem;
             display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
         }
         .live-card-badge {
-            font-size: 0.7rem; font-weight: 600; color: var(--sage);
+            font-size: 0.68rem; font-weight: 600; color: var(--leaf);
             display: flex; align-items: center; gap: 0.4rem;
         }
         .live-card-badge::before { content: '●'; color: #4ade80; font-size: 0.55rem; }
-        .live-card-note {
-            font-size: 0.64rem; color: rgba(255,255,255,0.38);
+        .live-card-time {
+            font-size: 0.63rem; color: var(--muted);
             font-family: 'JetBrains Mono', monospace; white-space: nowrap;
         }
+
         .live-card-warning {
             background: #fffbe6; border-bottom: 1px solid rgba(250,219,20,0.25);
             padding: 0.45rem 1.25rem; font-size: 0.72rem; color: #a16207;
         }
-        .live-card-body {
-            background: #f3f4f6;
-        }
+        .live-card-body { background: #f3f4f6; }
         .live-card-body iframe { width: 100%; border: none; display: block; min-height: 400px; }
         .live-placeholder {
             padding: 3.5rem 2rem; text-align: center;
@@ -518,7 +522,6 @@
     <div class="hero-bg"></div>
     <div class="hero-inner">
 
-        <!-- 左：文案 -->
         <div class="hero-content">
             <div class="eyebrow">LOF 套利机会提醒神器</div>
             <h1>米粒LOF助手</h1>
@@ -551,9 +554,10 @@
             </div>
         </div>
 
-        <!-- 右：实时推送预览卡片（替代原手机框） -->
+        <!-- 右：实时推送预览卡片 -->
         <div class="hero-visual">
             <div class="live-card">
+                <!-- 改动1：轻量顶栏，不再和 iframe 内容的深色 header 撞 -->
                 <div class="live-card-header">
                     <div class="live-card-badge">最近一次推送预览</div>
                     <div class="live-card-time" id="heroReportTime">加载中…</div>
@@ -663,19 +667,34 @@
         <h2 class="section-title">硬核规则与说明</h2>
         <p class="section-desc">订阅前强烈建议通读：筛选逻辑、计算公式与风险提示</p>
         <div class="rules-wrap reveal">
+
+            <!-- 溢价筛选 -->
             <div class="rule-card">
-                <h4>🎯 默认筛选规则与发送时间</h4>
+                <h4>📈 溢价套利筛选条件</h4>
                 <ul>
                     <li><strong>发送时间：</strong>每天下午 14:00，尾盘时段数据最稳定，适合参考决策。</li>
-                    <li><strong>溢价率 > 1%：</strong>太低了不够塞牙缝，过滤噪音。</li>
+                    <li><strong>溢价率 &gt; 1%：</strong>太低了不够塞牙缝，过滤噪音。</li>
                     <li><strong>限额 &lt; 1 万：</strong>无限额套利成功率太低，高限额跟没有没区别，直接过滤节省精力。</li>
-                    <li><strong>成交额 > 100 万：</strong>过滤流动性太差的冷门标的，降低冲击成本。</li>
+                    <li><strong>成交额 &gt; 100 万：</strong>过滤流动性太差的冷门标的，降低冲击成本。</li>
+                    <li><strong>操作方向：</strong>场外按净值申购（便宜）→ 份额到账后场内卖出（贵），赚溢价回归的差价。</li>
                 </ul>
             </div>
+
+            <!-- 改动2：新增折价套利筛选条件卡片 -->
+            <div class="rule-card" style="border-left-color: var(--leaf);">
+                <h4>📉 折价套利筛选条件</h4>
+                <ul>
+                    <li><strong>折价率 &gt; 1%：</strong>折价幅度足够大，覆盖赎回费后仍有余利。</li>
+                    <li><strong>成交额 &gt; 100 万：</strong>与溢价标准一致，保证流动性，确保能顺利买入。</li>
+                    <li><strong>操作方向：</strong>场内低价买入（便宜）→ 场外按净值赎回（贵）或者直接卖出，赚折价回归的差价。</li>                </ul>
+                <div class="formula">预计收益 = 买入金额 × 户数 × 折价率 − 买入佣金 − 赎回费</div>
+                <p style="margin-top:0.6rem" class="warn">⚠ 赎回期间净值可能波动，折价套利风险略高于溢价套利，持仓时间越长不确定性越大，请注意时间成本。</p>
+            </div>
+
             <div class="rule-card">
                 <h4>🧮 我们算的是净利润，不是溢价率</h4>
                 <p>这绝对不是只展示溢价率的半成品。脚本内置严格的净收益计算器：</p>
-                <div class="formula">预计收益 = 申购金额 × 户数 × 溢价率 − 申购费 − 卖出佣金</div>
+                <div class="formula">溢价收益 = 申购金额 × 户数 × 溢价率 − 申购费 − 卖出佣金</div>
                 <ul>
                     <li><strong>申购费：</strong>按场内申购打一折计算。</li>
                     <li><strong>卖出佣金：</strong>按万分之一（最低 0.2 元）计算。</li>
@@ -767,7 +786,7 @@
             </div>
             <div class="faq-item reveal reveal-d1">
                 <div class="faq-q"><span>为什么有时候好几天都不收到邮件？</span><span class="faq-chevron">▾</span></div>
-                <div class="faq-a"><p>这完全正常！套利机会本身不是天天都有的。工具筛选标准是溢价率 > 1%、限额 &lt; 1万、成交额 > 100万，符合条件才推送。这样可以避免信息轰炸，让你专注于真正有价值的机会。另外节假日 A 股不开盘时，工具也会自动休眠。</p></div>
+                <div class="faq-a"><p>这完全正常！套利机会本身不是天天都有的。溢价筛选标准是溢价率 &gt; 1%、限额 &lt; 1万、成交额 &gt; 100万；折价筛选标准是折价率 &gt; 1%、成交额 &gt; 100万，符合条件才推送。这样可以避免信息轰炸，让你专注于真正有价值的机会。节假日 A 股不开盘时，工具也会自动休眠。</p></div>
             </div>
             <div class="faq-item reveal reveal-d2">
                 <div class="faq-q"><span>订阅后多久能收到第一封推送？</span><span class="faq-chevron">▾</span></div>
@@ -852,7 +871,6 @@
 <script>
     let selectedPlan = '基础版';
 
-    /* ── 从 COS 加载最新推送 ── */
     async function loadLatestReport() {
         const bodyEl = document.getElementById('heroReportBody');
         const timeEl = document.getElementById('heroReportTime');
@@ -894,7 +912,6 @@
 
     document.addEventListener('DOMContentLoaded', loadLatestReport);
 
-    /* ── FAQ ── */
     document.querySelectorAll('.faq-item').forEach(item => {
         item.querySelector('.faq-q').addEventListener('click', () => {
             document.querySelectorAll('.faq-item').forEach(o => { if (o !== item) o.classList.remove('active'); });
@@ -902,7 +919,6 @@
         });
     });
 
-    /* ── Smooth Scroll ── */
     document.querySelectorAll('a[href^="#"]').forEach(a => {
         a.addEventListener('click', e => {
             e.preventDefault();
@@ -911,13 +927,11 @@
         });
     });
 
-    /* ── Scroll Reveal ── */
     const observer = new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    /* ── Modal ── */
     function openSubscribeModal(plan) {
         selectedPlan = plan || '基础版';
         document.getElementById('modalPlanLabel').textContent = selectedPlan;
@@ -935,7 +949,6 @@
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSubscribeModal(); });
 
-    /* ── 订阅跳转 ── */
     function handleSubscribe(event) {
         if (event) event.preventDefault();
         clearErrors();
@@ -971,3 +984,5 @@
 </script>
 </body>
 </html>
+HTMLEOF
+echo "done"
