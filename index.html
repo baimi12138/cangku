@@ -214,8 +214,8 @@
         #pricing .section-desc { color: rgba(255,255,255,0.5); }
 
         .pricing-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            max-width: 720px; margin: 2.75rem auto 0;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            max-width: 1080px; margin: 2.75rem auto 0;
             gap: 1.5rem; position: relative; z-index: 1;
         }
         .price-card {
@@ -450,6 +450,9 @@
             .fstrip-item { border-right: none; border-bottom: 1px solid var(--border); }
             .fstrip-item:last-child { border-bottom: none; }
         }
+        @media (min-width: 700px) and (max-width: 1100px) {
+            .pricing-grid { grid-template-columns: repeat(2, 1fr); max-width: 720px; }
+        }
         @media (max-width: 720px) {
             .nav-inner { padding: 0.85rem 1.25rem; }
             .logo { font-size: 1rem; gap: 0.4rem; }
@@ -588,7 +591,7 @@
     <div class="section-inner">
         <div class="section-label">订阅方案</div>
         <h2 class="section-title">选择适合你的套利工具</h2>
-        <p class="section-desc">不放心先试水，满意再包月。两档价格，总有一款符合你。</p>
+        <p class="section-desc">不放心先试水，满意再包月，长期用选年费更划算。三档价格，按需选择。</p>
         <div class="pricing-grid">
             <div class="price-card reveal" onclick="openSubscribeModal('试水版')">
                 <div class="price-tier">入门尝鲜</div>
@@ -626,6 +629,25 @@
                 </ul>
                 <button class="price-btn">选择基础版</button>
             </div>
+
+            <div class="price-card reveal reveal-d2" onclick="openSubscribeModal('年费版')">
+                <div class="price-badge" style="background:var(--forest);color:white;">省 ¥88.8</div>
+                <div class="price-tier">长期首选</div>
+                <div class="price-name">年费版</div>
+                <div class="price-amount">
+                    <span class="price-currency">¥</span>
+                    <span class="price-num">30</span>
+                </div>
+                <div class="price-period">/ 年 &nbsp;·&nbsp; 折合 ¥2.5/月</div>
+                <hr class="price-sep">
+                <ul class="price-list">
+                    <li>一次付费，全年无忧</li>
+                    <li>比包月省 75%，超值</li>
+                    <li>每天 14:00 准时推送</li>
+                    <li>长期套利者的最优解</li>
+                </ul>
+                <button class="price-btn">选择年费版</button>
+            </div>
         </div>
 
         <div class="invite-banner reveal">
@@ -660,7 +682,7 @@
             <h3>我跟你一样懒，所以才做了这个</h3>
             <p>套利信息是公开的，溢价率谁都能查。问题是，每天要扫几百只基金，再把溢价率减去申购费、减去卖出佣金，才知道到底能进多少兜——偶尔算错一次，一顿操作猛如虎，一看利润负两毛。</p>
             <p>我花了好几天手搓了个脚本，把这些重复的事全部自动化。现在每天下午只看一眼邮件——有机会就去申购，没机会它安静不打扰，彻底不用盯盘。</p>
-            <p class="story-quote">想省心的懒人，欢迎加入。¥9.9 / 月，不够一杯奶茶。</p>
+            <p class="story-quote">想省心的懒人，欢迎加入。¥9.9 / 月，不够一杯奶茶；¥30 / 年，长期用更划算。</p>
         </div>
     </div>
 </section>
@@ -914,7 +936,8 @@
 
         const afdianUrls = {
             '试水版': 'https://ifdian.net/order/create?product_type=1&plan_id=2dab165a46f011f1a3495254001e7c00&sku=%5B%7B%22sku_id%22%3A%222db4729a46f011f199605254001e7c00%22,%22count%22%3A1%7D%5D&viokrz_ex=0',
-            '基础版': 'https://www.ifdian.net/order/create?plan_id=2f0db94a1fc111f181125254001e7c00&product_type=0'
+            '基础版': 'https://www.ifdian.net/order/create?plan_id=2f0db94a1fc111f181125254001e7c00&product_type=0',
+            '年费版': 'https://ifdian.net/order/create?plan_id=715ce9ea9e7111f197d05254001e7c00&product_type=0&affiliate_code='
         };
 
         const baseUrl = afdianUrls[selectedPlan] || afdianUrls['基础版'];
